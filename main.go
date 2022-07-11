@@ -45,6 +45,12 @@ func main() {
 		commit_email = "readme-update-actions@example.com"
 	}
 
+	// git personal access token
+	git_token, _ := helpers.GetEnvString("INPUT_GIT_TOKEN")
+	if git_token == "" {
+		log.Fatal("GIT_TOKEN not provided")
+	}
+
 	// git commit message
 	commit_message, _ := helpers.GetEnvString("INPUT_COMMIT_MESSAGE")
 	if commit_message == "" {
@@ -99,6 +105,21 @@ func main() {
 	err = emailCmd.Run()
 	if err != nil {
 		log.Println("Error setting git email", err)
+	}
+
+	// add personal access token (git_token) to git
+	tokenCmd := exec.Command("git", "config", "credential.helper", "store --file", "git-credential-store", "--force")
+	err = tokenCmd.Run()
+	if err != nil {
+		log.Println("Error setting git token", err)
+	}
+
+	// store the token in git-credential-store
+	tokenFile := "git-credential-store"
+	tokenCmd = exec.Command("git", "credential-store", "store", "--file", tokenFile, "https://github.com", "token", git_token)
+	err = tokenCmd.Run()
+	if err != nil {
+		log.Println("Error setting git token", err)
 	}
 
 	// add to staging area

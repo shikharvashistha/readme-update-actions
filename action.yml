@@ -26,6 +26,10 @@ inputs:
     description: "Git commit message"
     default: "Update readme with latest blogs"
     required: false
+  personal_access_token:
+    description: "GitHub personal access token"
+    default: ""
+    required: true
 outputs:
   result_post:
     description: "Stringified posts in readme format"
@@ -37,6 +41,7 @@ runs:
   - "-rss_list=${{ inputs.rss_list }}"
   - "-commit_user=${{ inputs.commit_user }}"
   - "-commit_email=${{ inputs.commit_email }}"
+  - "-personal_access_token=${{ secrets.personal_access_token }}"
   - "-commit_message=${{ inputs.commit_message }}"
 
 branding:
